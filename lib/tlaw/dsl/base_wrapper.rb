@@ -1,4 +1,4 @@
-require_relative 'post_process_proxy'
+require_relative 'post_processor_proxy'
 
 module TLAW
   module DSL
@@ -271,10 +271,10 @@ module TLAW
     #     ...and so on. See also {#param} for understanding what you
     #     can change here.
 
-    # @!method post_process(key = nil, &block)
+    # @!method process(key = nil, &block)
     #   Sets post-processors for response.
     #
-    #   There are also {#post_process_replace} (for replacing entire
+    #   There are also {#process_replace} (for replacing entire
     #   response with something else) and {#post_process_items} (for
     #   post-processing each item of sub-array).
     #
@@ -292,20 +292,20 @@ module TLAW
     #     response hash will immediately have
     #     `{"key.count" => 1, "key.continue" => false}`.
     #
-    #   @overload post_process(&block)
+    #   @overload process(&block)
     #     Sets post-processor for whole response. Note, that in this case
     #     _return_ value of block is ignored, it is expected that your
     #     block will receive response and modify it inplace, like this:
     #
     #     ```ruby
-    #     post_process do |response|
+    #     process do |response|
     #       response['coord'] = Geo::Coord.new(response['lat'], response['lng'])
     #     end
     #     ```
     #     If you need to replace entire response with something else,
-    #     see {#post_process_replace}
+    #     see {#process_replace}
     #
-    #   @overload post_process(key, &block)
+    #   @overload process(key, &block)
     #     Sets post-processor for one response key. Post-processor is
     #     called only if key exists in the response, and value by this
     #     key is replaced with post-processor's response.
@@ -315,9 +315,9 @@ module TLAW
     #     Usage:
     #
     #     ```ruby
-    #     post_process('date') { |val| Date.parse(val) }
+    #     process('date') { |val| Date.parse(val) }
     #     # or, btw, just
-    #     post_process('date', &Date.method(:parse))
+    #     process('date', &Date.method(:parse))
     #     ```
     #
     #     @param key [String]
@@ -327,7 +327,7 @@ module TLAW
     #   the key is present in response, and if its value is array of
     #   hashes).
     #
-    #   Inside `block` you can use {#post_process} method as described
+    #   Inside `block` you can use {#process} method as described
     #   above (but all of its actions will be related only to current
     #   item of array).
     #
@@ -348,18 +348,18 @@ module TLAW
     #
     #   ```ruby
     #   post_process_items 'data' do
-    #     post_process 'timestamp', &Date.method(:parse)
-    #     post_process 'value', &:to_i
-    #     post_process('dummy'){nil} # will be removed
+    #     process 'timestamp', &Date.method(:parse)
+    #     process 'value', &:to_i
+    #     process('dummy'){nil} # will be removed
     #   end
     #   ```
     #
-    #   See also {#post_process} for some generic explanation of post-processing.
+    #   See also {#process} for some generic explanation of post-processing.
     #
     #   @param key [String]
 
-    # @!method post_process_replace(&block)
-    #   Just like {#post_process} for entire response, but _replaces_
+    # @!method process_replace(&block)
+    #   Just like {#process} for entire response, but _replaces_
     #   it with what block returns.
     #
     #   Real-life usage: WorldBank API typically returns responses this
@@ -375,12 +375,12 @@ module TLAW
     #   two keys in hash. We can easily fix this:
     #
     #   ```ruby
-    #   post_process_replace do |response|
+    #   process_replace do |response|
     #     {meta: response.first, data: response.last}
     #   end
     #   ```
     #
-    #   See also {#post_process} for some generic explanation of post-processing.
+    #   See also {#process} for some generic explanation of post-processing.
 
     # @private
     class BaseWrapper
@@ -411,16 +411,16 @@ module TLAW
         @object.param_set.add(name, **opts.merge(type: type))
       end
 
-      def post_process(key = nil, &block)
-        @object.response_processor.add_post_processor(key, &block)
+      def process(key = nil, &block)
+        @object.response_processor.add_processor(key, &block)
       end
 
-      def post_process_replace(&block)
+      def process_replace(&block)
         @object.response_processor.add_replacer(&block)
       end
 
       def post_process_items(key, &block)
-        PostProcessProxy
+        PostProcessorProxy
           .new(key, @object.response_processor)
           .instance_eval(&block)
       end

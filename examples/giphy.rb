@@ -52,7 +52,7 @@ module TLAW
 
               param :phrase, field: :s, keyword: false, required: true, desc: 'Phrase to translate'
 
-              post_process(/\.(size|mp4_size|webp_size|width|height|frames)/, &:to_i)
+              process(/\.(size|mp4_size|webp_size|width|height|frames)/, &:to_i)
             end
 
             endpoint :random do
@@ -63,7 +63,7 @@ module TLAW
             end
 
             post_process_items('data') do
-              post_process(/\.(size|mp4_size|webp_size|width|height|frames)/, &:to_i)
+              process(/\.(size|mp4_size|webp_size|width|height|frames)/, &:to_i)
             end
           end
         end

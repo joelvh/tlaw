@@ -4,9 +4,9 @@
 [![Build Status](https://travis-ci.org/molybdenum-99/tlaw.svg?branch=master)](https://travis-ci.org/molybdenum-99/tlaw)
 [![Coverage Status](https://coveralls.io/repos/molybdenum-99/tlaw/badge.svg?branch=master)](https://coveralls.io/r/molybdenum-99/tlaw?branch=master)
 
-**TLAW** (pronounce it like "tea+love"... or whatever) is the last (and only)
-API wrapper framework you'll ever need for accessing _GET-only APIs_<sup>[*](#get-only-api)</sup>
-in a consistent way (think weather, search, economical indicators, geonames and so on).
+**TLAW** (pronounce it like "tea+love"... or whatever) is the last (and
+only) API wrapper framework for you'll ever need APIs in a consistent way
+(think weather, search, economical indicators, geonames and so on).
 
 ## Table Of Contents
 
@@ -281,31 +281,31 @@ them in several ways:
 
 ```ruby
 # input is entire response, block can mutate it
-post_process { |hash| hash['foo'] = 'bar' }
+process { |hash| hash['foo'] = 'bar' }
 
 # input is entire response, and response is fully replaced with block's
 # return value
-post_process { |hash| hash['foo'] } # Now only "foo"s value will be response
+process { |hash| hash['foo'] } # Now only "foo"s value will be response
 
 # input is value of response's key "some_key", return value of a block
 # becames new value of "some_key".
-post_process('some_key') { |val| other_val }
+process('some_key') { |val| other_val }
 
 # Post-processing each item, if response['foo'] is array:
 post_process_items('foo') {
   # mutate entire item
-  post_process { |item| item.delete('bar') }
+  process { |item| item.delete('bar') }
 
   # if item is a Hash, replace its "bar" value
-  post_process('bar') { |val| val.to_s }
+  process('bar') { |val| val.to_s }
 }
 
 # More realistic examples:
-post_process('meta.count', &:to_i)
-post_process_items('daily') {
-  post_process('date', &Date.method(:parse))
+process('meta.count', &:to_i)
+process('daily') {
+  process('date', &Date.method(:parse))
 }
-post_process('auxiliary_value') { nil } # Nil's will be thrown away completely
+process('auxiliary_value') { nil } # Nil's will be thrown away completely
 ```
 
 See full post-processing features descriptions in

@@ -154,31 +154,31 @@ module TLAW
         end
       end
 
-      describe '#post_process' do
+      describe '#process' do
         it 'adds post processor without key' do
-          expect(endpoint.response_processor).to receive(:add_post_processor).with(nil)
-          wrapper.post_process { |h| }
+          expect(endpoint.response_processor).to receive(:add_processor).with(nil)
+          wrapper.process { |h| }
         end
 
         it 'adds post processor with key' do
-          expect(endpoint.response_processor).to receive(:add_post_processor).with('count')
-          wrapper.post_process('count') { |h| }
+          expect(endpoint.response_processor).to receive(:add_processor).with('count')
+          wrapper.process('count') { |h| }
         end
       end
 
-      describe '#post_process_each' do
+      describe '#process_each' do
         it 'adds post processor without key' do
           expect(endpoint.response_processor)
-            .to receive(:add_item_post_processor)
+            .to receive(:add_item_processor)
             .with('list', nil)
-          wrapper.post_process_items('list') { post_process { |h| } }
+          wrapper.post_process_items('list') { process { |h| } }
         end
 
         it 'adds post processor with key' do
           expect(endpoint.response_processor)
-            .to receive(:add_item_post_processor)
+            .to receive(:add_item_processor)
             .with('list', 'dt')
-          wrapper.post_process_items('list') { post_process('dt') { |h| } }
+          wrapper.post_process_items('list') { process('dt') { |h| } }
         end
       end
     end
