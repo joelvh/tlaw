@@ -19,7 +19,7 @@ module TLAW
       end
 
       def all_processors
-        [*(parent && parent.all_processors), *@processors]
+        [*(parent&.all_processors), *@processors]
       end
     end
   end
