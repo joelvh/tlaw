@@ -32,7 +32,7 @@ class TMDB < TLAW::API
       endpoint :movie do
         param :query, required: true, keyword: false
 
-        post_process_items('results') {
+        process_items('results') {
           process 'release_date', &Date.method(:parse)
         }
       end
@@ -88,7 +88,7 @@ tmdb.class.define do
   namespace :movies do
     namespace :[] do
       endpoint :images do
-        post_process_items 'posters' do
+        process_items 'posters' do
           process('file_path') { |p| 'https://image.tmdb.org/t/p/original' + p }
         end
       end

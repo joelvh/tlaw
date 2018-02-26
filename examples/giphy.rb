@@ -62,7 +62,7 @@ module TLAW
               param :rating, desc: 'Parental advisory rating'
             end
 
-            post_process_items('data') do
+            process_items('data') do
               process(/\.(size|mp4_size|webp_size|width|height|frames)/, &:to_i)
             end
           end

@@ -88,15 +88,15 @@ module TLAW
 
         process 'currently.time', &Time.method(:at)
 
-        post_process_items('minutely.data') {
+        process_items('minutely.data') {
           process 'time', &Time.method(:at)
         }
 
-        post_process_items('hourly.data') {
+        process_items('hourly.data') {
           process 'time', &Time.method(:at)
         }
 
-        post_process_items('daily.data') {
+        process_items('daily.data') {
           process 'time', &Time.method(:at)
           process 'sunriseTime', &Time.method(:at)
           process 'sunsetTime', &Time.method(:at)
