@@ -2,7 +2,7 @@ module TLAW
   module Processors
     # @private
     # FIXME: everything is awfully dirty here
-    class BaseProcessor
+    class Base
       attr_reader :processors
       attr_accessor :parent
 
