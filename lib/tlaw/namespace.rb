@@ -151,16 +151,13 @@ module TLAW
     private
 
     def child(symbol, expected_class, **params)
-      children[symbol].yield_self do |child_class|
-        if child_class && child_class < expected_class
-          return child_class.new(@parent_params.merge(params))
+      children[symbol]
+        .tap do |child_class|
+          child_class && child_class < expected_class or
+            fail ArgumentError,
+                 "Unregistered #{expected_class.name.downcase}: #{symbol}"
         end
-
-        fail(
-          ArgumentError,
-          "Unregistered #{expected_class.name.downcase}: #{symbol}"
-        )
-      end
+        .new(@parent_params.merge(params))
     end
   end
 end
