@@ -1,4 +1,4 @@
-require_relative 'base_processor'
+require_relative 'base'
 require 'json'
 require 'crack'
 
@@ -6,7 +6,7 @@ module TLAW
   module Processors
     # @private
     # FIXME: everything is awfully dirty here
-    class ResponseProcessor < BaseProcessor
+    class ResponseProcessor < Base
       class Base
         def initialize(&block)
           @block = block
