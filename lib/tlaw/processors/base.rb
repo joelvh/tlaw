@@ -1,6 +1,9 @@
+require_relative 'transforms/items'
+require_relative 'transforms/key'
+require_relative 'transforms/replace'
+
 module TLAW
   module Processors
-    # @private
     # FIXME: everything is awfully dirty here
     class Base
       attr_reader :processors
@@ -10,16 +13,50 @@ module TLAW
         @processors = processors
       end
 
-      def call(response)
-        all_processors.reduce(response) { |result, processor| process(processor, result) }
+      def add_processor(key = nil, &block)
+        @processors << (key ? Transforms::Key.new(key, &block) : Transforms::Base.new(&block))
       end
 
-      def process(processor, obj)
-        processor.call(obj)
+      def add_replacer(&block)
+        @processors << Transforms::Replace.new(&block)
+      end
+
+      def add_item_processor(key, subkey = nil, &block)
+        @processors << Transforms::Items.new(key, subkey, &block)
       end
 
       def all_processors
         [*(parent&.all_processors), *@processors]
+      end
+
+      def call(response)
+        response
+          .yield_self(&method(:guard_errors!))
+          .yield_self(&method(:parse_response))
+          .yield_self(&method(:apply_processors))
+      end
+
+      def guard_errors!(response)
+        # TODO: follow redirects
+        return response if (200...400).cover?(response.status)
+
+        body = JSON.parse(response.body) rescue nil
+        message = body && (body['message'] || body['error'])
+
+        fail API::Error,
+             ["HTTP #{response.status} at #{response.env[:url]}", message].compact.join(': ')
+      end
+
+      def parse_response(response)
+        response.body
+      end
+
+      def apply_processors(obj)
+        all_processors.reduce(obj) { |result, processor| apply(processor, result) }
+      end
+
+      def apply(processor, obj)
+        processor.call(obj)
       end
     end
   end

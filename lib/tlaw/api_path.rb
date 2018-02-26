@@ -1,5 +1,5 @@
 require_relative 'params/set'
-require_relative 'processors/response_processor'
+require_relative 'processors/data_table_response_processor'
 require 'forwardable'
 
 module TLAW
@@ -42,8 +42,7 @@ module TLAW
         return unless @description || @docs_link
 
         Util::Description.new(
-          [@description, ("Docs: #{@docs_link}" if @docs_link)]
-            .compact.join("\n\n")
+          [@description, @docs_link && "Docs: #{@docs_link}"].compact.join("\n\n")
         )
       end
 
@@ -81,7 +80,7 @@ module TLAW
 
       # @private
       def response_processor
-        @response_processor ||= Processors::ResponseProcessor.new
+        @response_processor ||= Processors::DataTableResponseProcessor.new
       end
 
       # @private
