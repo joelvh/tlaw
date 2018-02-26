@@ -1,6 +1,6 @@
 module TLAW
   module Processors
-    describe ResponseProcessor do
+    describe DataTableResponseProcessor do
       let(:processor) { described_class.new }
 
       describe 'initial flattening' do
