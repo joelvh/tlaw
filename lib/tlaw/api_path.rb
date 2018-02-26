@@ -49,6 +49,9 @@ module TLAW
       # @private
       def inherit(namespace, **attrs)
         Class.new(self).tap do |subclass|
+          # Inherit response processor
+          attrs[:response_processor] ||= namespace.response_processor.class.new
+
           attrs.each { |a, v| subclass.send("#{a}=", v) }
           namespace.const_set(subclass.class_name, subclass)
         end
