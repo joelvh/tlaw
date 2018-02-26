@@ -1,14 +1,16 @@
 require_relative 'params/set'
+require_relative 'processors/response_processor'
 require 'forwardable'
 
 module TLAW
-  # Base class for all API pathes: entire API, namespaces and endpoints.
+  # Base class for all API paths: entire API, namespaces and endpoints.
   # Allows to define params and post-processors on any level.
   #
   class APIPath
     class << self
       # @private
-      attr_accessor :base_url, :path, :xml, :docs_link
+      attr_accessor :base_url, :path, :docs_link
+      attr_accessor :response_processor
 
       # @private
       def symbol
@@ -79,7 +81,7 @@ module TLAW
 
       # @private
       def response_processor
-        @response_processor ||= ResponseProcessor.new
+        @response_processor ||= Processors::ResponseProcessor.new
       end
 
       # @private

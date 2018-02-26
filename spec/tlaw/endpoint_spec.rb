@@ -59,7 +59,7 @@ module TLAW
     describe '#call' do
       before {
         endpoint_class.param_set.add(:q)
-        endpoint_class.response_processor.add_post_processor('response.message', &:downcase)
+        endpoint_class.response_processor.add_processor('response.message', &:downcase)
       }
 
       let(:deep_hash) {

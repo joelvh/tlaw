@@ -1,3 +1,5 @@
+require_relative 'endpoint'
+
 module TLAW
   # Namespace is basically a container for {Endpoint}s. It allows to
   # nest Ruby calls (like `api.namespace1.namespace2.real_call(params)`),
@@ -35,7 +37,7 @@ module TLAW
         @base_url = url
 
         children.each_value do |c|
-          c.base_url = base_url + c.path if c.path && !c.base_url
+          c.base_url ||= base_url + c.path if c.path
         end
       end
 
@@ -68,14 +70,14 @@ module TLAW
 
       # @private
       def inspect_docs
-        inspect_namespaces + inspect_endpoints + ' docs: .describe>'
+        "#{inspect_namespaces}#{inspect_endpoints} docs: .describe>"
       end
 
       # @private
       def add_child(child)
         children[child.symbol] = child
 
-        child.base_url = base_url + child.path if !child.base_url && base_url
+        child.base_url ||= base_url + child.path if base_url
 
         child.define_method_on(self)
       end
@@ -98,11 +100,13 @@ module TLAW
 
       def inspect_namespaces
         return '' if namespaces.empty?
+
         " namespaces: #{namespaces.keys.join(', ')};"
       end
 
       def inspect_endpoints
         return '' if endpoints.empty?
+
         " endpoints: #{endpoints.keys.join(', ')};"
       end
 
@@ -123,8 +127,10 @@ module TLAW
       end
 
       def children_description(children)
-        children.values.map(&:describe_short)
-                .map { |cd| cd.indent('  ') }.join("\n\n")
+        children
+          .values
+          .map(&:describe_short)
+          .map { |cd| cd.indent('  ') }.join("\n\n")
       end
     end
 
@@ -145,17 +151,16 @@ module TLAW
     private
 
     def child(symbol, expected_class, **params)
-      children[symbol]
-        .tap do |child_class|
-          child_class && child_class < expected_class ||
-            fail(
-              ArgumentError,
-              "Unregistered #{expected_class.name.downcase}: #{symbol}"
-            )
+      children[symbol].yield_self do |child_class|
+        if child_class && child_class < expected_class
+          return child_class.new(@parent_params.merge(params))
         end
-        .yield_self do |child_class|
-          child_class.new(@parent_params.merge(params))
-        end
+
+        fail(
+          ArgumentError,
+          "Unregistered #{expected_class.name.downcase}: #{symbol}"
+        )
+      end
     end
   end
 end

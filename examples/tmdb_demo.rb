@@ -33,7 +33,7 @@ class TMDB < TLAW::API
         param :query, required: true, keyword: false
 
         post_process_items('results') {
-          post_process 'release_date', &Date.method(:parse)
+          process 'release_date', &Date.method(:parse)
         }
       end
     end
@@ -89,7 +89,7 @@ tmdb.class.define do
     namespace :[] do
       endpoint :images do
         post_process_items 'posters' do
-          post_process('file_path') { |p| 'https://image.tmdb.org/t/p/original' + p }
+          process('file_path') { |p| 'https://image.tmdb.org/t/p/original' + p }
         end
       end
     end
