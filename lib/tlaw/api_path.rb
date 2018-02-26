@@ -10,7 +10,7 @@ module TLAW
     class << self
       # @private
       attr_accessor :base_url, :path, :docs_link
-      attr_accessor :response_processor
+      attr_writer :response_processor
 
       # @private
       def symbol
