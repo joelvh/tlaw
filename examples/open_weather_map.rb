@@ -259,7 +259,7 @@ module TLAW
 
         # For endpoints returning list of weathers (forecast or several
         # cities).
-        post_process_items('list', &WEATHER_PROCESSOR)
+        process_items('list', &WEATHER_PROCESSOR)
       end
     end
   end

@@ -275,7 +275,7 @@ module TLAW
     #   Sets post-processors for response.
     #
     #   There are also {#process_replace} (for replacing entire
-    #   response with something else) and {#post_process_items} (for
+    #   response with something else) and {#process_items} (for
     #   post-processing each item of sub-array).
     #
     #   Notes:
@@ -322,7 +322,7 @@ module TLAW
     #
     #     @param key [String]
 
-    # @!method post_process_items(key, &block)
+    # @!method process_items(key, &block)
     #   Sets post-processors for each items of array, being at `key` (if
     #   the key is present in response, and if its value is array of
     #   hashes).
@@ -347,7 +347,7 @@ module TLAW
     #   ...you can define postprocessing like this:
     #
     #   ```ruby
-    #   post_process_items 'data' do
+    #   process_items 'data' do
     #     process 'timestamp', &Date.method(:parse)
     #     process 'value', &:to_i
     #     process('dummy'){nil} # will be removed
@@ -419,7 +419,7 @@ module TLAW
         @object.response_processor.add_replacer(&block)
       end
 
-      def post_process_items(key, &block)
+      def process_items(key, &block)
         PostProcessorProxy
           .new(key, @object.response_processor)
           .instance_eval(&block)

@@ -171,14 +171,14 @@ module TLAW
           expect(endpoint.response_processor)
             .to receive(:add_item_processor)
             .with('list', nil)
-          wrapper.post_process_items('list') { process { |h| } }
+          wrapper.process_items('list') { process { |h| } }
         end
 
         it 'adds post processor with key' do
           expect(endpoint.response_processor)
             .to receive(:add_item_processor)
             .with('list', 'dt')
-          wrapper.post_process_items('list') { process('dt') { |h| } }
+          wrapper.process_items('list') { process('dt') { |h| } }
         end
       end
     end

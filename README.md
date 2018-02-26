@@ -292,7 +292,7 @@ process { |hash| hash['foo'] } # Now only "foo"s value will be response
 process('some_key') { |val| other_val }
 
 # Post-processing each item, if response['foo'] is array:
-post_process_items('foo') {
+process_items('foo') {
   # mutate entire item
   process { |item| item.delete('bar') }
 
