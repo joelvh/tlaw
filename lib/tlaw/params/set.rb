@@ -24,7 +24,7 @@ module TLAW
           if @params[name]
             @params[name].merge(**opts)
           else
-            Params.make(name, **opts)
+            Param.make(name, **opts)
           end
       end
 

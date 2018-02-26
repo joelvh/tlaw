@@ -1,5 +1,4 @@
 module TLAW
-  # TODO: Add docs
   module Params
     # This error is thrown when some value could not be converted to what
     # this parameter inspects. For example:
@@ -18,21 +17,11 @@ module TLAW
     # ```
     #
     Nonconvertible = Class.new(ArgumentError)
-
-    def self.make(name, **options)
-      # NB: Sic. :keyword is nil (not provided) should still
-      #     make a keyword argument.
-      if options[:keyword] == false
-        Argument.new(name, **options)
-      else
-        Keyword.new(name, **options)
-      end
-    end
   end
 end
 
 require_relative 'params/argument'
-require_relative 'params/base'
 require_relative 'params/keyword'
+require_relative 'params/param'
 require_relative 'params/set'
 require_relative 'params/type'
