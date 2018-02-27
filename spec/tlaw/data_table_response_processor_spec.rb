@@ -60,7 +60,7 @@ module TLAW
 
         context 'global' do
           before {
-            wrapper.process { |h|
+            wrapper.transform { |h|
               h['count'] = h['count'].to_i
             }
           }
@@ -70,7 +70,7 @@ module TLAW
 
         context 'one key' do
           before {
-            wrapper.process('count', &:to_i)
+            wrapper.transform('count', &:to_i)
           }
 
           its(['count']) { is_expected.to eq 10 }
@@ -87,7 +87,7 @@ module TLAW
 
           context 'by key' do
             before {
-              wrapper.process_item('list') { |h| h['t'] = Time.at(h['t']) }
+              wrapper.transform_item('list') { |h| h['t'] = Time.at(h['t']) }
             }
 
             its_map(['t']) { are_expected.to all be_a(Time) }
@@ -95,7 +95,7 @@ module TLAW
 
           context 'element -> key' do
             before {
-              wrapper.process_item('list', 't') { |v| Time.at(v) }
+              wrapper.transform_item('list', 't') { |v| Time.at(v) }
             }
 
             its_map(['t']) { are_expected.to all be_a(Time) }
@@ -110,7 +110,7 @@ module TLAW
 
         context 'removing unnecessary' do
           before {
-            wrapper.process('dummy') { nil }
+            wrapper.transform('dummy') { nil }
           }
 
           it { is_expected.not_to include('dummy') }
@@ -118,7 +118,7 @@ module TLAW
 
         context 'reflattening' do
           before {
-            wrapper.process('count') { {'total' => 100, 'current' => 10} }
+            wrapper.transform('count') { {'total' => 100, 'current' => 10} }
           }
 
           it { is_expected.not_to include('count') }

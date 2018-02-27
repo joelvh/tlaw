@@ -86,20 +86,20 @@ module TLAW
             }
         end
 
-        process 'currently.time', &Time.method(:at)
+        transform 'currently.time', &Time.method(:at)
 
-        process_items('minutely.data') {
-          process 'time', &Time.method(:at)
+        transform_items('minutely.data') {
+          transform 'time', &Time.method(:at)
         }
 
-        process_items('hourly.data') {
-          process 'time', &Time.method(:at)
+        transform_items('hourly.data') {
+          transform 'time', &Time.method(:at)
         }
 
-        process_items('daily.data') {
-          process 'time', &Time.method(:at)
-          process 'sunriseTime', &Time.method(:at)
-          process 'sunsetTime', &Time.method(:at)
+        transform_items('daily.data') {
+          transform 'time', &Time.method(:at)
+          transform 'sunriseTime', &Time.method(:at)
+          transform 'sunsetTime', &Time.method(:at)
         }
       end
     end
