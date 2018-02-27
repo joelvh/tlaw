@@ -38,21 +38,27 @@ module TLAW
         @object.response_processor = processor
       end
 
-      def process(key = nil, &block)
+      def transform(key = nil, &block)
         @object.response_processor.processors << Transforms::Key.build(key, &block)
       end
 
-      def process_replace(&block)
+      def transform_replace(&block)
         @object.response_processor.processors << Transforms::Replace.new(&block)
       end
 
-      def process_item(key, subkey = nil, &block)
+      def transform_item(key, subkey = nil, &block)
         @object.response_processor.processors << Transforms::Items.new(key, subkey, &block)
       end
 
-      def process_items(key, &block)
+      def transform_items(key, &block)
         @object.response_processor.processors.concat Transforms::ItemsBatch.batch(key, &block)
       end
+
+      # Backwards-compatibility
+      alias_method :process, :transform
+      alias_method :process_replace, :transform_replace
+      alias_method :process_item, :transform_item
+      alias_method :process_items, :transform_items
     end
   end
 end

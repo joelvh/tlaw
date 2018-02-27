@@ -281,31 +281,31 @@ them in several ways:
 
 ```ruby
 # input is entire response, block can mutate it
-process { |hash| hash['foo'] = 'bar' }
+transform { |hash| hash['foo'] = 'bar' }
 
 # input is entire response, and response is fully replaced with block's
 # return value
-process { |hash| hash['foo'] } # Now only "foo"s value will be response
+transform { |hash| hash['foo'] } # Now only "foo"s value will be response
 
 # input is value of response's key "some_key", return value of a block
 # becames new value of "some_key".
-process('some_key') { |val| other_val }
+transform('some_key') { |val| other_val }
 
 # Post-processing each item, if response['foo'] is array:
-process_items('foo') {
+transform_items('foo') {
   # mutate entire item
-  process { |item| item.delete('bar') }
+  transform { |item| item.delete('bar') }
 
   # if item is a Hash, replace its "bar" value
-  process('bar') { |val| val.to_s }
+  transform('bar') { |val| val.to_s }
 }
 
 # More realistic examples:
-process('meta.count', &:to_i)
-process('daily') {
-  process('date', &Date.method(:parse))
+transform('meta.count', &:to_i)
+transform('daily') {
+  transform('date', &Date.method(:parse))
 }
-process('auxiliary_value') { nil } # Nil's will be thrown away completely
+transform('auxiliary_value') { nil } # Nil's will be thrown away completely
 ```
 
 See full post-processing features descriptions in
