@@ -298,28 +298,29 @@ module TLAW
     #     ...and so on. See also {#param} for understanding what you
     #     can change here.
 
-    # @!method transform(key = nil, &block)
+    # @!method transform(key = nil, replace: false, &block)
     #   Sets post-processors for response.
     #
-    #   There are also {#transform_replace} (for replacing entire
-    #   response with something else) and {#transform_items} (for
-    #   post-processing each item of sub-array).
+    #   There are also the `replace` option (for replacing entire
+    #   response with something else), set to `false` by default.
+    #   Alternatively, {#transform_items} is a separate method for
+    #   post-processing each item of sub-array.
     #
     #   Notes:
     #
     #   * you can set any number of post-processors of any kind, and they
-    #     will be applied in exactly the same order they are set;
+    #     will be applied in exactly the same order they are defined;
     #   * you can set post-processors in parent namespace (or for entire
     #     API), in this case post-processors of _outer_ namespace are
-    #     always applied before inner ones. That allow you to define some
-    #     generic parsing/rewriting on API level, then more specific
-    #     key postprocessors on endpoints;
+    #     always applied before inner ones. That allows you to define some
+    #     generic parsing/rewriting at the API level, then more specific
+    #     key post-processors on endpoints;
     #   * hashes are flattened again after _each_ post-processor, so if
     #     for some `key` you'll return `{count: 1, continue: false}`,
-    #     response hash will immediately have
+    #     the response hash will immediately have
     #     `{"key.count" => 1, "key.continue" => false}`.
     #
-    #   @overload transform(&block)
+    #   @overload transform(replace: false, &block)
     #     Sets post-processor for whole response. Note, that in this case
     #     _return_ value of block is ignored, it is expected that your
     #     block will receive response and modify it inplace, like this:
@@ -329,8 +330,27 @@ module TLAW
     #       response['coord'] = Geo::Coord.new(response['lat'], response['lng'])
     #     end
     #     ```
+    #
     #     If you need to replace entire response with something else,
-    #     see {#transform_replace}
+    #     set the `replace` option to `true`.
+    #
+    #     Real-life usage: WorldBank API typically returns responses this
+    #     way:
+    #
+    #     ```json
+    #     [
+    #        {"count": 100, "page": 1},
+    #        {"some_data_variable": [{}, {}, {}]}
+    #     ]
+    #     ```
+    #     ...e.g. metadata and real response as two items in array, not
+    #     two keys in hash. We can easily fix this:
+    #
+    #     ```ruby
+    #     transform(replace: true) do |response|
+    #       {meta: response.first, data: response.last}
+    #     end
+    #     ```
     #
     #   @overload transform(key, &block)
     #     Sets post-processor for one response key. Post-processor is
@@ -384,30 +404,6 @@ module TLAW
     #   See also {#transform} for some generic explanation of post-processing.
     #
     #   @param key [String]
-
-    # @!method transform_replace(&block)
-    #   Just like {#transform} for entire response, but _replaces_
-    #   it with what block returns.
-    #
-    #   Real-life usage: WorldBank API typically returns responses this
-    #   way:
-    #
-    #   ```json
-    #   [
-    #      {"count": 100, "page": 1},
-    #      {"some_data_variable": [{}, {}, {}]}
-    #   ]
-    #   ```
-    #   ...e.g. metadata and real response as two items in array, not
-    #   two keys in hash. We can easily fix this:
-    #
-    #   ```ruby
-    #   transform_replace do |response|
-    #     {meta: response.first, data: response.last}
-    #   end
-    #   ```
-    #
-    #   See also {#transform} for some generic explanation of post-processing.
   end
 end
 

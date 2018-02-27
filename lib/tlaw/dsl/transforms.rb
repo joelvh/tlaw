@@ -1,6 +1,12 @@
 module TLAW
   module DSL
     module Transforms
+      def self.build(key = nil, replace: false, &block)
+        return Key.new(key, &block) if key
+        return Replace.new(&block)  if replace
+
+        Base.new(&block)
+      end
     end
   end
 end

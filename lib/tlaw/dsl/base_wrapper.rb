@@ -38,12 +38,8 @@ module TLAW
         @object.response_processor = processor
       end
 
-      def transform(key = nil, &block)
-        @object.response_processor.processors << Transforms::Key.build(key, &block)
-      end
-
-      def transform_replace(&block)
-        @object.response_processor.processors << Transforms::Replace.new(&block)
+      def transform(key = nil, replace: false, &block)
+        @object.response_processor.processors << Transforms.build(key, replace: replace, &block)
       end
 
       def transform_item(key, subkey = nil, &block)
@@ -55,10 +51,14 @@ module TLAW
       end
 
       # Backwards-compatibility
+
       alias_method :process, :transform
-      alias_method :process_replace, :transform_replace
       alias_method :process_item, :transform_item
       alias_method :process_items, :transform_items
+
+      def process_replace(&block)
+        transform(replace: true, &block)
+      end
     end
   end
 end
