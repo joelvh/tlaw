@@ -302,7 +302,7 @@ transform_items('foo') {
 
 # More realistic examples:
 transform('meta.count', &:to_i)
-transform('daily') {
+transform_items('daily') {
   transform('date', &Date.method(:parse))
 }
 transform('auxiliary_value') { nil } # Nil's will be thrown away completely
