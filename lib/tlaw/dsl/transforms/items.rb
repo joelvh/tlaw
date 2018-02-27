@@ -6,7 +6,7 @@ module TLAW
       class Items < Base
         def initialize(key, subkey = nil, &block)
           @key = key
-          @item_processor = Key.build(subkey, &block)
+          @item_processor = Transforms.build(subkey, &block)
         end
 
         def call(hash)
