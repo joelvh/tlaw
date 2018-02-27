@@ -39,7 +39,7 @@ module TLAW
       end
 
       def process(key = nil, &block)
-        @object.response_processor.processors << (key ? Transforms::Key.new(key, &block) : Transforms::Base.new(&block))
+        @object.response_processor.processors << Transforms::Key.build(key, &block)
       end
 
       def process_replace(&block)
@@ -51,9 +51,7 @@ module TLAW
       end
 
       def process_items(key, &block)
-        Transforms::ItemsBatch
-          .new(key, @object.response_processor)
-          .instance_eval(&block)
+        @object.response_processor.processors.concat Transforms::ItemsBatch.batch(key, &block)
       end
     end
   end

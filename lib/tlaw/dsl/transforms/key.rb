@@ -4,6 +4,10 @@ module TLAW
   module DSL
     module Transforms
       class Key < Base
+        def self.build(key = nil, &block)
+          key ? Key.new(key, &block) : Base.new(&block)
+        end
+
         def initialize(key, &block)
           @key = key
           super(&block)
