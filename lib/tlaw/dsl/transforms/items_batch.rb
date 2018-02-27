@@ -4,13 +4,21 @@ module TLAW
   module DSL
     module Transforms
       class ItemsBatch
-        def initialize(parent_key, parent)
-          @parent_key = parent_key
-          @parent = parent
+        def self.batch(key, &block)
+          batcher = new(key)
+          batcher.instance_eval(&block)
+          batcher.processors
         end
-  
+
+        attr_reader :processors
+
+        def initialize(parent_key)
+          @parent_key = parent_key
+          @processors = []
+        end
+
         def process(key = nil, &block)
-          @parent.processors << Items.new(@parent_key, key, &block)
+          tap { @processors << Items.new(@parent_key, key, &block) }
         end
       end
     end

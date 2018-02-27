@@ -168,12 +168,12 @@ module TLAW
 
       describe '#process_each' do
         it 'adds post processor without key' do
-          expect(endpoint.response_processor.processors).to receive(:<<).with(DSL::Transforms::Items)
+          expect(endpoint.response_processor.processors).to receive(:concat).with([DSL::Transforms::Items])
           wrapper.process_items('list') { process { |h| } }
         end
 
         it 'adds post processor with key' do
-          expect(endpoint.response_processor.processors).to receive(:<<).with(DSL::Transforms::Items)
+          expect(endpoint.response_processor.processors).to receive(:concat).with([DSL::Transforms::Items])
           wrapper.process_items('list') { process('dt') { |h| } }
         end
       end
