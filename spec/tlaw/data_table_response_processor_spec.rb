@@ -2,6 +2,8 @@ module TLAW
   module Processors
     describe DataTableResponseProcessor do
       let(:processor) { described_class.new }
+      let(:endpoint) { Class.new(Endpoint).tap { |endpoint| endpoint.response_processor = processor } }
+      let(:wrapper) { DSL::EndpointWrapper.new(endpoint) }
 
       describe 'initial flattening' do
         let(:source) {
@@ -58,7 +60,7 @@ module TLAW
 
         context 'global' do
           before {
-            processor.add_processor { |h|
+            wrapper.process { |h|
               h['count'] = h['count'].to_i
             }
           }
@@ -68,7 +70,7 @@ module TLAW
 
         context 'one key' do
           before {
-            processor.add_processor('count', &:to_i)
+            wrapper.process('count', &:to_i)
           }
 
           its(['count']) { is_expected.to eq 10 }
@@ -85,7 +87,7 @@ module TLAW
 
           context 'by key' do
             before {
-              processor.add_item_processor('list') { |h| h['t'] = Time.at(h['t']) }
+              wrapper.process_item('list') { |h| h['t'] = Time.at(h['t']) }
             }
 
             its_map(['t']) { are_expected.to all be_a(Time) }
@@ -93,7 +95,7 @@ module TLAW
 
           context 'element -> key' do
             before {
-              processor.add_item_processor('list', 't') { |v| Time.at(v) }
+              wrapper.process_item('list', 't') { |v| Time.at(v) }
             }
 
             its_map(['t']) { are_expected.to all be_a(Time) }
@@ -108,7 +110,7 @@ module TLAW
 
         context 'removing unnecessary' do
           before {
-            processor.add_processor('dummy') { nil }
+            wrapper.process('dummy') { nil }
           }
 
           it { is_expected.not_to include('dummy') }
@@ -116,7 +118,7 @@ module TLAW
 
         context 'reflattening' do
           before {
-            processor.add_processor('count') { {'total' => 100, 'current' => 10} }
+            wrapper.process('count') { {'total' => 100, 'current' => 10} }
           }
 
           it { is_expected.not_to include('count') }

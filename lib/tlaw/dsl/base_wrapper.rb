@@ -1,4 +1,8 @@
-require_relative 'post_processor_proxy'
+require_relative 'transforms/base'
+require_relative 'transforms/items'
+require_relative 'transforms/items_batch'
+require_relative 'transforms/key'
+require_relative 'transforms/replace'
 
 module TLAW
   module DSL
@@ -35,15 +39,19 @@ module TLAW
       end
 
       def process(key = nil, &block)
-        @object.response_processor.add_processor(key, &block)
+        @object.response_processor.processors << (key ? Transforms::Key.new(key, &block) : Transforms::Base.new(&block))
       end
 
       def process_replace(&block)
-        @object.response_processor.add_replacer(&block)
+        @object.response_processor.processors << Transforms::Replace.new(&block)
+      end
+
+      def process_item(key, subkey = nil, &block)
+        @object.response_processor.processors << Transforms::Items.new(key, subkey, &block)
       end
 
       def process_items(key, &block)
-        PostProcessorProxy
+        Transforms::ItemsBatch
           .new(key, @object.response_processor)
           .instance_eval(&block)
       end

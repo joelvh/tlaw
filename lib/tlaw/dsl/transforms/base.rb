@@ -1,5 +1,5 @@
 module TLAW
-  module Processors
+  module DSL
     module Transforms
       class Base
         def initialize(&block)
