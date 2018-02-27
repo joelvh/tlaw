@@ -1,8 +1,4 @@
-require_relative 'transforms/base'
-require_relative 'transforms/items'
-require_relative 'transforms/items_batch'
-require_relative 'transforms/key'
-require_relative 'transforms/replace'
+require_relative 'transforms'
 
 module TLAW
   module DSL
