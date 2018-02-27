@@ -22,11 +22,20 @@ module TLAW
   module DSL
     # @!method base(url)
     #   Allows to set entire API base URL, all endpoints and namespaces
-    #   pathes are calculated relative to it.
+    #   paths are calculated relative to it.
     #
     #   **Works for:** API
     #
     #   @param url [String]
+
+    # @!method response_processor(processor)
+    #   Allows to specify a custom response processor, such as basic XML/JSON
+    #   processing without flattining into a DataTable. The processor is
+    #   inherited by nested namespaces and endpoints.
+    #
+    #   **Works for:** API, namespace, endpoint
+    #
+    #   @param processor [TLAW::Processors::Base]
 
     # @!method desc(text)
     #   Allows to set description string for your API object. It can
