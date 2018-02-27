@@ -1,7 +1,3 @@
-require_relative 'transforms/items'
-require_relative 'transforms/key'
-require_relative 'transforms/replace'
-
 module TLAW
   module Processors
     # FIXME: everything is awfully dirty here
@@ -13,20 +9,8 @@ module TLAW
         @processors = processors
       end
 
-      def add_processor(key = nil, &block)
-        @processors << (key ? Transforms::Key.new(key, &block) : Transforms::Base.new(&block))
-      end
-
-      def add_replacer(&block)
-        @processors << Transforms::Replace.new(&block)
-      end
-
-      def add_item_processor(key, subkey = nil, &block)
-        @processors << Transforms::Items.new(key, subkey, &block)
-      end
-
       def all_processors
-        [*(parent&.all_processors), *@processors]
+        [*parent&.all_processors, *@processors]
       end
 
       def call(response)

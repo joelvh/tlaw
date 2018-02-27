@@ -1,7 +1,7 @@
 require_relative 'base'
 
 module TLAW
-  module Processors
+  module DSL
     module Transforms
       class Items < Base
         def initialize(key, subkey = nil, &block)
