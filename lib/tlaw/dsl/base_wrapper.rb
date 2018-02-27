@@ -30,6 +30,10 @@ module TLAW
         @object.param_set.add(name, **opts.merge(type: type))
       end
 
+      def response_processor(processor)
+        @object.response_processor = processor
+      end
+
       def process(key = nil, &block)
         @object.response_processor.add_processor(key, &block)
       end
